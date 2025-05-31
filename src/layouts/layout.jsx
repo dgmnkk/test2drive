@@ -29,7 +29,7 @@ const MainLayout = () => {
 
   return (
     user ? (
-    <Layout style={{ height: '100vh' }}>
+    <Layout style={{ minHeight: '100vh' }}>
       <Sider style={{ paddingTop: '50px' }} trigger={null} collapsible collapsed={collapsed}>
         <div className="demo-logo-vertical" />
         <Menu
