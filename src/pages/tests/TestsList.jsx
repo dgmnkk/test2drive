@@ -40,7 +40,7 @@ const TestsPage = () => {
               >
                 {isCompleted && (
                   <Typography.Text type="secondary">
-                    ✅ Пройдено. Результат: {score}%
+                    ✅ Завершено. Результат: {score}%
                   </Typography.Text>
                 )}
                 <div style={{ marginTop: 12 }}>
