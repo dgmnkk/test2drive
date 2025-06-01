@@ -1,6 +1,9 @@
 import React from "react";
 import { useParams } from "react-router-dom";
 import { Typography } from "antd";
+import { Button } from "antd";
+import { ArrowLeftOutlined } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
 
 const { Title, Paragraph } = Typography;
 
@@ -16,6 +19,7 @@ const lectures = [
 const LectureDetails = () => {
   const { id } = useParams();
   const lecture = lectures.find((l) => l.id === parseInt(id));
+   const navigate = useNavigate();
 
   if (!lecture) {
     return <Title level={3}>Лекцію не знайдено</Title>;
@@ -23,6 +27,9 @@ const LectureDetails = () => {
 
   return (
     <div style={{ padding: "24px" }}>
+      <Button onClick={() => navigate('/lectures')}>
+        <ArrowLeftOutlined />
+      </Button>
       <Title>{lecture.title}</Title>
       <Paragraph>{lecture.content}</Paragraph>
     </div>

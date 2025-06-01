@@ -37,20 +37,20 @@ const MainLayout = () => {
           mode="inline"
         >
           <Menu.Item key="1" icon={<BookOutlined />}>
-            <Link to="/lectures">Lectures</Link>
+            <Link to="/lectures">Лекції</Link>
           </Menu.Item>
           <Menu.Item key="2" icon={<FileDoneOutlined />}>
-            <Link to="/tests">Tests</Link>
+            <Link to="/tests">Тести</Link>
           </Menu.Item>
           <Menu.Item key="3" icon={<CarOutlined />}>
-            <Link to="/exam">Exam</Link>
+            <Link to="/exam">Екзамен</Link>
           </Menu.Item>
           <Menu.Item key="4" icon={<UserOutlined />}>
-            <Link to="/profile">My Profile</Link>
+            <Link to="/profile">Мій профіль</Link>
           </Menu.Item>
           <Menu.Item key="5" icon={<LogoutOutlined />}>
             <p onClick={handleLogout}>
-                Log out
+                Вихід
             </p>
           </Menu.Item>
         </Menu>
