@@ -1,18 +1,21 @@
 import React from 'react';
 import { Button, Form, Input, message } from 'antd';
 import { useNavigate } from 'react-router-dom';
+import { login } from '../../api/authApi';
 
 const LoginPage = () => {
     const navigate = useNavigate();
 
-    const onFinish = (values) => {
-        const { email, password } = values;
-        if (email && password) {
-            sessionStorage.setItem('user', JSON.stringify({username: email, password: password}));
-            message.success('Login successful');
+    const onFinish = async (values) => {
+        try {
+            const res = await login(values.email, values.password);
+            sessionStorage.setItem('accessToken', res.accessToken);
+            sessionStorage.setItem('refreshToken', res.refreshToken);
+            sessionStorage.setItem('user', JSON.stringify(res.user));
+            message.success('Успішний вхід');
             navigate('/lectures');
-        } else {
-            message.error('Invalid credentials');
+        } catch (err) {
+            message.error(err.message);
         }
     };
 
