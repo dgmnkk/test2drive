@@ -32,6 +32,7 @@ const LecturesList = () => {
       try {
         const data = await getLectureCategories();
         setCategories(data);
+        console.log('Fetched categories:', data);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -81,9 +82,9 @@ const LecturesList = () => {
   };
 
   const filteredLectures = allLectures
-    .filter(lecture => lecture && lecture.name)
+    .filter(lecture => lecture && lecture. title)
     .filter(lecture =>
-      lecture.name.toLowerCase().includes(searchTerm.toLowerCase())
+      lecture.title.toLowerCase().includes(searchTerm.toLowerCase())
     )
     .filter(lecture => !onlyReadLater || readLaterIds.includes(lecture.id))
     .filter(lecture => !onlyViewed || viewedIds.includes(lecture.id))
@@ -148,7 +149,7 @@ const LecturesList = () => {
         renderItem={(lecture) => (
           <List.Item>
             <Card
-              title={`${lecture.name} (${lecture.categoryTitle})`}
+              title={`${lecture.title} (${lecture.categoryTitle})`}
               hoverable
               onClick={() => handleCardClick(lecture.id)}
               style={{
