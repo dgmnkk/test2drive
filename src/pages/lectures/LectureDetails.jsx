@@ -1,37 +1,44 @@
-import React from "react";
-import { useParams } from "react-router-dom";
-import { Typography } from "antd";
-import { Button } from "antd";
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { Typography, Button, Spin } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
-import { useNavigate } from "react-router-dom";
+import { getLectureById } from "../../api/lecturesApi";
 
 const { Title, Paragraph } = Typography;
 
-const lectures = [
-  { id: 1, title: "Тема 1", content: "Повний зміст лекції 1" },
-  { id: 2, title: "Тема 2", content: "Повний зміст лекції 2" },
-  { id: 3, title: "Тема 3", content: "Повний зміст лекції 3" },
-  { id: 4, title: "Тема 4", content: "Повний зміст лекції 4" },
-  { id: 5, title: "Тема 5", content: "Повний зміст лекції 5" },
-  { id: 6, title: "Тема 6", content: "Повний зміст лекції 6" },
-];
-
 const LectureDetails = () => {
   const { id } = useParams();
-  const lecture = lectures.find((l) => l.id === parseInt(id));
-   const navigate = useNavigate();
+  const navigate = useNavigate();
+  const [lecture, setLecture] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  if (!lecture) {
-    return <Title level={3}>Лекцію не знайдено</Title>;
-  }
+  useEffect(() => {
+    const fetchLecture = async () => {
+      try {
+        const data = await getLectureById(id);
+        setLecture(data);
+      } catch (err) {
+        setError("Не вдалося завантажити лекцію");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchLecture();
+  }, [id]);
+
+  if (loading) return <Spin tip="Завантаження..." />;
+  if (error) return <Title level={3}>{error}</Title>;
+  if (!lecture) return <Title level={3}>Лекцію не знайдено</Title>;
 
   return (
     <div style={{ padding: "24px" }}>
-      <Button onClick={() => navigate('/lectures')}>
-        <ArrowLeftOutlined />
+      <Button onClick={() => navigate("/lectures")}>
+        <ArrowLeftOutlined /> Назад
       </Button>
       <Title>{lecture.title}</Title>
-      <Paragraph>{lecture.content}</Paragraph>
+      <Paragraph>{lecture.content || "Опису немає"}</Paragraph>
     </div>
   );
 };

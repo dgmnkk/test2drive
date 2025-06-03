@@ -9,6 +9,7 @@ import LectureDetails from './pages/lectures/LectureDetails';
 import ProfilePage from './pages/profile/ProfilePage';
 import TestsList from './pages/tests/TestsList';
 import TestPage from './pages/tests/TestPage';
+import StatisticsPage from './pages/statistics/StatisticsPage';
 
 function App() {
   return (
@@ -18,8 +19,9 @@ function App() {
           <Route path="/lectures" element={<LecturesList />} />
           <Route path="/lectures/:id" element={<LectureDetails />} />
           <Route path="/profile" element={<ProfilePage />} />
-          <Route path='/tests' element={<TestsList />} />
-          <Route path='/tests/:id' element={<TestPage />} />
+          <Route path="/tests" element={<TestsList />} />
+          <Route path="/tests/:id" element={<TestPage />} />
+          <Route path="/statistics" element={<StatisticsPage />} />
         </Route>
 
         <Route path="/login" element={<LoginPage />} />
