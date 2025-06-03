@@ -1,19 +1,18 @@
-import React from 'react'
-import { Link, Outlet, Navigate } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, Outlet, Navigate, useNavigate } from 'react-router-dom';
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
-    FileDoneOutlined,
+  FileDoneOutlined,
   UserOutlined,
   CarOutlined,
   LogoutOutlined,
-  BookOutlined
+  BookOutlined,
+  BarChartOutlined,  // <- імпорт іконки для статистики
 } from '@ant-design/icons';
-import { Button, Layout, Menu, theme} from 'antd';
-import { useState } from 'react';
-const { Header, Sider, Content } = Layout;
+import { Button, Layout, Menu, theme } from 'antd';
 
+const { Header, Sider, Content } = Layout;
 
 const MainLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -22,20 +21,17 @@ const MainLayout = () => {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
   const user = sessionStorage.getItem('user');
+
   const handleLogout = () => {
     sessionStorage.clear();
-    navigate('/'); 
+    navigate('/');
   };
 
-  return (
-    user ? (
+  return user ? (
     <Layout style={{ minHeight: '100vh' }}>
       <Sider style={{ paddingTop: '50px' }} trigger={null} collapsible collapsed={collapsed}>
         <div className="demo-logo-vertical" />
-        <Menu
-          theme="dark"
-          mode="inline"
-        >
+        <Menu theme="dark" mode="inline">
           <Menu.Item key="1" icon={<BookOutlined />}>
             <Link to="/lectures">Лекції</Link>
           </Menu.Item>
@@ -48,15 +44,21 @@ const MainLayout = () => {
           <Menu.Item key="4" icon={<UserOutlined />}>
             <Link to="/profile">Мій профіль</Link>
           </Menu.Item>
+          <Menu.Item key="6" icon={<BarChartOutlined />}>
+            <Link to="/statistics">Статистика</Link> {/* <-- додано */}
+          </Menu.Item>
           <Menu.Item key="5" icon={<LogoutOutlined />}>
-            <p onClick={handleLogout}>
-                Вихід
-            </p>
+            <p onClick={handleLogout}>Вихід</p>
           </Menu.Item>
         </Menu>
       </Sider>
       <Layout>
-        <Header style={{ padding: 0, background: colorBgContainer }}>
+        <Header
+          style={{
+            padding: 0,
+            background: colorBgContainer,
+          }}
+        >
           <Button
             type="text"
             icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
@@ -81,10 +83,9 @@ const MainLayout = () => {
         </Content>
       </Layout>
     </Layout>
-    ) : (
-      <Navigate to="/login" replace />
-    )
+  ) : (
+    <Navigate to="/login" replace />
   );
-}
+};
 
-export default MainLayout
+export default MainLayout;
