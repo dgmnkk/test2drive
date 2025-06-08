@@ -3,7 +3,6 @@ import { Card, Typography, Input, Button, Form, message, DatePicker, Avatar } fr
 import { getUserProfile, updateUserProfileDetails } from '../../api/profileApi';
 import dayjs from 'dayjs';
 
-
 const { Title } = Typography;
 
 const ProfilePage = () => {
@@ -16,15 +15,18 @@ const ProfilePage = () => {
       try {
         const data = await getUserProfile();
 
+        const phoneWithoutCode = data.profile?.phone
+          ? data.profile.phone.replace(/^\+380/, '')
+          : '';
+
         const mergedProfile = {
           firstName: data.firstName || '',
           lastName: data.lastName || '',
           email: data.email || '',
-          phone: data.profile?.phone || '',
+          phone: phoneWithoutCode,
           dateOfBirth: data.profile?.dateOfBirth || '',
           avatarUrl: data.profile?.avatarUrl || '',
           createdAt: data.createdAt || null,
-          updatedAt: data.updatedAt || null,
         };
 
         setProfile(mergedProfile);
@@ -44,24 +46,27 @@ const ProfilePage = () => {
   const onFinish = async (values) => {
     try {
       const bodyToSend = {
-      phone: values.phone ? '+380' + values.phone : '',
-      dateOfBirth: values.dateOfBirth ? values.dateOfBirth.format('YYYY-MM-DD') : null,
-      avatarUrl: values.avatarUrl,
-    };
+        phone: values.phone ? '+380' + values.phone : '',
+        dateOfBirth: values.dateOfBirth ? values.dateOfBirth.format('YYYY-MM-DD') : null,
+        avatarUrl: values.avatarUrl,
+      };
 
       await updateUserProfileDetails(bodyToSend);
 
       const updatedData = await getUserProfile();
 
+      const phoneWithoutCode = updatedData.profile?.phone
+        ? updatedData.profile.phone.replace(/^\+380/, '')
+        : '';
+
       setProfile({
         firstName: updatedData.firstName || '',
         lastName: updatedData.lastName || '',
         email: updatedData.email || '',
-        phone: updatedData.profile?.phone || '',
+        phone: phoneWithoutCode,
         dateOfBirth: updatedData.profile?.dateOfBirth || '',
         avatarUrl: updatedData.profile?.avatarUrl || '',
         createdAt: updatedData.createdAt || null,
-        updatedAt: updatedData.updatedAt || null,
       });
 
       setEditing(false);
@@ -76,16 +81,15 @@ const ProfilePage = () => {
   }
 
   const formatDate = (dateString) => {
-  if (!dateString) return 'Не вказано';
-  return new Date(dateString).toLocaleString('uk-UA', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-};
-
+    if (!dateString) return 'Не вказано';
+    return new Date(dateString).toLocaleString('uk-UA', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  };
 
   return (
     <Card style={{ maxWidth: 600, margin: '24px auto', padding: '24px' }}>
@@ -95,11 +99,10 @@ const ProfilePage = () => {
       <p><b>Прізвище:</b> {profile.lastName}</p>
       <p><b>Пошта:</b> {profile.email}</p>
       <p><b>Дата створення профілю:</b> {formatDate(profile.createdAt)}</p>
-      <p><b>Дата останнього редагування:</b> {formatDate(profile.updatedAt)}</p>
 
       {!editing ? (
         <>
-          <p><b>Телефон:</b> {profile.phone || 'Не вказано'}</p>
+          <p><b>Телефон:</b> {profile.phone ? '+380' + profile.phone : 'Не вказано'}</p>
           <p><b>Дата народження:</b> {profile.dateOfBirth ? formatDate(profile.dateOfBirth) : 'Не вказано'}</p>
           {profile.avatarUrl ? (
             <Avatar src={profile.avatarUrl} size={64} style={{ marginRight: 16 }} />
@@ -113,73 +116,72 @@ const ProfilePage = () => {
         </>
       ) : (
         <Form
-  form={form}
-  layout="vertical"
-  onFinish={onFinish}
-  style={{ marginTop: 16 }}
->
-  <Form.Item
-    label="Телефон"
-    name="phone"
-    rules={[
-      {
-        required: true,
-        message: 'Введіть номер телефону',
-      },
-      {
-        pattern: /^\d{9}$/,
-        message: 'Введіть 9 цифр номера без +380',
-      },
-    ]}
-  >
-    <Input
-      maxLength={9}
-      placeholder="123456789"
-      addonBefore="+380"
-      onKeyPress={(e) => {
-        if (!/[0-9]/.test(e.key)) {
-          e.preventDefault();
-        }
-      }}
-    />
-  </Form.Item>
+          form={form}
+          layout="vertical"
+          onFinish={onFinish}
+          style={{ marginTop: 16 }}
+        >
+          <Form.Item
+            label="Телефон"
+            name="phone"
+            rules={[
+              {
+                required: true,
+                message: 'Введіть номер телефону',
+              },
+              {
+                pattern: /^\d{9}$/,
+                message: 'Введіть 9 цифр номера без +380',
+              },
+            ]}
+          >
+            <Input
+              maxLength={9}
+              placeholder="123456789"
+              addonBefore="+380"
+              onKeyPress={(e) => {
+                if (!/[0-9]/.test(e.key)) {
+                  e.preventDefault();
+                }
+              }}
+            />
+          </Form.Item>
 
-  <Form.Item label="Дата народження" name="dateOfBirth">
-    <DatePicker format="YYYY-MM-DD" />
-  </Form.Item>
+          <Form.Item label="Дата народження" name="dateOfBirth">
+            <DatePicker format="YYYY-MM-DD" />
+          </Form.Item>
 
-  <Form.Item
-    label="Аватар (URL)"
-    name="avatarUrl"
-    rules={[
-      {
-        validator: (_, value) => {
-          if (!value || value.trim() === '') {
-            return Promise.resolve();
-          }
-          try {
-            new URL(value);
-            return Promise.resolve();
-          } catch {
-            return Promise.reject('Введіть коректну URL-адресу');
-          }
-        },
-      },
-    ]}
-  >
-    <Input />
-  </Form.Item>
+          <Form.Item
+            label="Аватар (URL)"
+            name="avatarUrl"
+            rules={[
+              {
+                validator: (_, value) => {
+                  if (!value || value.trim() === '') {
+                    return Promise.resolve();
+                  }
+                  try {
+                    new URL(value);
+                    return Promise.resolve();
+                  } catch {
+                    return Promise.reject('Введіть коректну URL-адресу');
+                  }
+                },
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
 
-  <Form.Item>
-    <Button type="primary" htmlType="submit" style={{ marginRight: 8 }}>
-      Зберегти
-    </Button>
-    <Button onClick={() => setEditing(false)}>
-      Скасувати
-    </Button>
-  </Form.Item>
-</Form>
-
+          <Form.Item>
+            <Button type="primary" htmlType="submit" style={{ marginRight: 8 }}>
+              Зберегти
+            </Button>
+            <Button onClick={() => setEditing(false)}>
+              Скасувати
+            </Button>
+          </Form.Item>
+        </Form>
       )}
     </Card>
   );
