@@ -6,10 +6,12 @@ import { getLectureCategories } from '../../api/lecturesApi';
 const { Title } = Typography;
 const { Search } = Input;
 
-const READ_LATER_KEY = 'readLaterLectures';
-const VIEWED_KEY = 'viewedLectures';
+
 
 const LecturesList = () => {
+  const email = sessionStorage.getItem('email');
+  const READ_LATER_KEY = 'readLaterLectures_' + email;
+  const VIEWED_KEY = 'viewedLectures_' + email;
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [readLaterIds, setReadLaterIds] = useState(() => {
@@ -26,6 +28,7 @@ const LecturesList = () => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
 
   useEffect(() => {
     const fetchLectures = async () => {

@@ -9,7 +9,7 @@ import { getTestById } from '../../api/testsApi';
 const TestPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  
+  const email = sessionStorage.getItem('email');
   const [test, setTest] = useState(null);
   const [answers, setAnswers] = useState([]);
   const [submitted, setSubmitted] = useState(false);
@@ -53,7 +53,7 @@ const TestPage = () => {
       if (chosenOpt && chosenOpt.isCorrect) correctCount++;
     });
     const percent = Math.round((correctCount / test.testQuestions.length) * 100);
-    localStorage.setItem(`testResult_${id}`, `${percent}`);
+    localStorage.setItem(`testResult_${id}_${email}`, `${percent}`);
     message.success(`Результат: ${percent}%`);
   };
 
@@ -133,7 +133,7 @@ const TestPage = () => {
       ) : (
         <Space direction="vertical">
           <Typography.Text strong>
-            ✅ Результат: {localStorage.getItem(`testResult_${id}`)}%
+            ✅ Результат: {localStorage.getItem(`testResult_${id}_${email}`)}%
           </Typography.Text>
           <Space>
             <Button onClick={() => setShowCorrect(true)}>Переглянути правильні</Button>

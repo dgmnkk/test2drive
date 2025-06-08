@@ -7,6 +7,7 @@ const TestsList = () => {
   const [tests, setTests] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const email = sessionStorage.getItem('email');
 
   useEffect(() => {
     (async () => {
@@ -22,7 +23,7 @@ const TestsList = () => {
   }, []);
 
   const getTestResult = (id) => {
-    const result = localStorage.getItem(`testResult_${id}`);
+    const result = localStorage.getItem(`testResult_${id}_${email}`);
     return result ? Number(result) : null;
   };
 

@@ -13,6 +13,7 @@ const LoginPage = () => {
             sessionStorage.setItem('accessToken', res.accessToken);
             sessionStorage.setItem('refreshToken', res.refreshToken);
             sessionStorage.setItem('user', JSON.stringify(res.user));
+            sessionStorage.setItem('email', res.user.email);
             message.success('Успішний вхід');
             navigate('/lectures');
         } catch (err) {

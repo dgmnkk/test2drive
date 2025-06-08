@@ -6,6 +6,7 @@ import { getTests } from '../../api/testsApi';
 const ExamsList = () => {
   const [tests, setTests] = useState([]);
   const [loading, setLoading] = useState(true);
+  const email = sessionStorage.getItem('email');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -22,13 +23,13 @@ const ExamsList = () => {
   }, []);
 
   const getTestResult = (id) => {
-    const result = localStorage.getItem(`testResult_${id}`);
+    const result = localStorage.getItem(`testResult_${id}_${email}`);
     return result ? Number(result) : null;
   };
 
   const getTestPassed = (id) => {
-    const result = localStorage.getItem(`testPassed_${id}`);
-    return result ? '✅ Ви склали екзамен' : '❌ Екзамен не складено';
+    const result = localStorage.getItem(`testPassed_${id}_${email}`);
+    return result == true ? '✅ Ви склали екзамен' : '❌ Екзамен не складено';
   };
 
   return (
@@ -39,6 +40,7 @@ const ExamsList = () => {
         <Row gutter={[16, 16]}>
           {tests.map(test => {
             const score = getTestResult(test.id);
+            const passed = getTestPassed(test.id);
             const isCompleted = score !== null;
             return (
               <Col key={test.id} xs={24} sm={12} md={8}>
@@ -56,7 +58,7 @@ const ExamsList = () => {
                         ✅ Завершено. Результат: {score}%
                         </Typography.Text>
                         <Typography.Text type="secondary">
-                            {getTestPassed(test.id)}
+                        {passed}
                         </Typography.Text>
                     </div>
                   )}

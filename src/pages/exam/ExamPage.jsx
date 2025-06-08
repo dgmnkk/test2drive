@@ -8,7 +8,7 @@ import { getTestById } from '../../api/testsApi';
 const ExamPage = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-
+    const email = sessionStorage.getItem('email');
     const [exam, setExam] = useState(null);
     const [answers, setAnswers] = useState([]);
     const [submitted, setSubmitted] = useState(false);
@@ -71,8 +71,8 @@ const ExamPage = () => {
         const score = Math.round((correct / exam.testQuestions.length) * 100);
         const passed = score >= exam.passingScorePercentage;
         
-        localStorage.setItem(`testResult_${exam.id}`, score.toString());
-        localStorage.setItem(`testPassed_${exam.id}`, passed.toString());
+        localStorage.setItem(`testResult_${exam.id}_${email}`, score.toString());
+        localStorage.setItem(`testPassed_${exam.id}_${email}`, passed.toString());
 
         Modal.info({
             title: passed ? '✅ Ви склали екзамен' : '❌ Екзамен не складено',
