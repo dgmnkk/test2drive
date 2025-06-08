@@ -10,6 +10,8 @@ import ProfilePage from './pages/profile/ProfilePage';
 import TestsList from './pages/tests/TestsList';
 import TestPage from './pages/tests/TestPage';
 import StatisticsPage from './pages/statistics/StatisticsPage';
+import ExamsList from './pages/exam/ExamsList';
+import ExamPage from './pages/exam/ExamPage';
 
 function App() {
   return (
@@ -22,6 +24,8 @@ function App() {
           <Route path="/tests" element={<TestsList />} />
           <Route path="/tests/:id" element={<TestPage />} />
           <Route path="/statistics" element={<StatisticsPage />} />
+          <Route path="/exams" element={<ExamsList />} />
+          <Route path="/exams/:id" element={<ExamPage />} />
         </Route>
 
         <Route path="/login" element={<LoginPage />} />

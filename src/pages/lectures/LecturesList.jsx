@@ -47,6 +47,7 @@ const LecturesList = () => {
     (category.lectures || []).map(lecture => ({
       ...lecture,
       categoryTitle: category.name,
+      categoryDescription: category.description,
     }))
   );
 
@@ -82,7 +83,7 @@ const LecturesList = () => {
   };
 
   const filteredLectures = allLectures
-    .filter(lecture => lecture && lecture. title)
+    .filter(lecture => lecture && lecture.title)
     .filter(lecture =>
       lecture.title.toLowerCase().includes(searchTerm.toLowerCase())
     )
@@ -168,7 +169,7 @@ const LecturesList = () => {
                 </Button>
               }
             >
-              {lecture.description || 'Без опису'}
+              {lecture.categoryDescription || 'Без опису'}
             </Card>
           </List.Item>
         )}

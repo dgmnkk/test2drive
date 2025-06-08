@@ -1,172 +1,148 @@
-import { useParams } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import {
-    Card,
-    Radio,
-    Button,
-    Typography,
-    message,
-    Row,
-    Col,
-    Space,
+  Card, Radio, Button, Typography, message, Row, Space, Spin,
 } from 'antd';
 import { ArrowLeftOutlined } from '@ant-design/icons';
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-
-const mockQuestions = [
-    {
-        question: 'Що означає цей дорожній знак?',
-        options: ['Рух заборонено', 'Головна дорога', 'Пішохідний перехід'],
-        correctIndex: 1,
-    },
-    {
-        question: 'Де дозволено зупинку?',
-        options: [
-            'На пішохідному переході',
-            'На зупинці громадського транспорту',
-            'За 10 м до пішохідного переходу',
-        ],
-        correctIndex: 2,
-    },
-];
+import { getTestById } from '../../api/testsApi';
 
 const TestPage = () => {
-    const { id } = useParams();
-    const [answers, setAnswers] = useState(Array(mockQuestions.length).fill(null));
-    const [submitted, setSubmitted] = useState(false);
-    const [showCorrect, setShowCorrect] = useState(false);
-    const [seconds, setSeconds] = useState(0);
-    const navigate = useNavigate();
+  const { id } = useParams();
+  const navigate = useNavigate();
+  
+  const [test, setTest] = useState(null);
+  const [answers, setAnswers] = useState([]);
+  const [submitted, setSubmitted] = useState(false);
+  const [showCorrect, setShowCorrect] = useState(false);
+  const [seconds, setSeconds] = useState(0);
 
-    useEffect(() => {
-        if (!submitted) {
-            const timer = setInterval(() => {
-                setSeconds((prev) => prev + 1);
-            }, 1000);
-            return () => clearInterval(timer);
-        }
-    }, [submitted]);
+  useEffect(() => {
+    (async () => {
+          try {
+            const data = await getTestById(id);
+            setTest(data);
+            setAnswers(data.testQuestions.map(() => null));
+          } catch (err) {
+            message.error(err.message || 'Не вдалося завантажити тест');
+          }
+        })();
+  }, [id]);
 
-    const handleChange = (questionIndex, value) => {
-        const updated = [...answers];
-        updated[questionIndex] = value;
-        setAnswers(updated);
-    };
+  useEffect(() => {
+    if (!submitted) {
+      const timer = setInterval(() => setSeconds(prev => prev + 1), 1000);
+      return () => clearInterval(timer);
+    }
+  }, [submitted]);
 
-    const handleSubmit = () => {
-        if (answers.includes(null)) {
-            message.warning('Будь ласка, дайте відповідь на всі питання');
-            return;
-        }
+  const handleChange = (index, value) => {
+    const updated = [...answers];
+    updated[index] = value;
+    setAnswers(updated);
+  };
 
-        setSubmitted(true);
-        const correctCount = answers.filter((a, i) => a === mockQuestions[i].correctIndex).length;
-        const percent = Math.round((correctCount / mockQuestions.length) * 100);
-        sessionStorage.setItem(`testResult_${id}`, `${percent}`);
-        message.success(`Тест завершено. Результат: ${percent}%`);
-    };
+  const handleSubmit = () => {
+    if (answers.includes(null)) {
+      message.warning('Пройдіть всі питання');
+      return;
+    }
+    setSubmitted(true);
+    let correctCount = 0;
+    test.testQuestions.forEach((q, i) => {
+      const chosenOpt = q.question.options[answers[i]];
+      if (chosenOpt && chosenOpt.isCorrect) correctCount++;
+    });
+    const percent = Math.round((correctCount / test.testQuestions.length) * 100);
+    localStorage.setItem(`testResult_${id}`, `${percent}`);
+    message.success(`Результат: ${percent}%`);
+  };
 
-    const handleRetry = () => {
-        setAnswers(Array(mockQuestions.length).fill(null));
-        setSubmitted(false);
-        setShowCorrect(false);
-        setSeconds(0);
-    };
+  const handleRetry = () => {
+    setAnswers(test.testQuestions.map(() => null));
+    setSubmitted(false);
+    setShowCorrect(false);
+    setSeconds(0);
+  };
 
-    const score = answers.reduce(
-        (acc, answer, i) => (answer === mockQuestions[i].correctIndex ? acc + 1 : acc),
-        0
-    );
+  const formatTime = sec => `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2,'0')}`;
 
-    const formatTime = (sec) => {
-        const mins = Math.floor(sec / 60);
-        const secs = sec % 60;
-        return `${mins}:${secs.toString().padStart(2, '0')}`;
-    };
+  if (!test) return <Spin />;
 
-    const resultPercent = Math.round((score / mockQuestions.length) * 100);
+  return (
+    <div style={{ padding: 24, background: '#fff' }}>
+      <Button onClick={() => navigate('/tests')}>
+        <ArrowLeftOutlined /> Назад
+      </Button>
 
-    return (
-        <div style={{ padding: 24, background: '#fff' }}>
-            <Button onClick={() => navigate('/tests')}>
-                <ArrowLeftOutlined />
-            </Button>
-            <Row justify="space-between" style={{ marginBottom: 16 }}>
-                <Typography.Title level={3}>Тест №{id}</Typography.Title>
-                <div
-                    style={{
-                        backgroundColor: '#fff1f0',
-                        border: '1px solid #ff4d4f',
-                        borderRadius: '12px',
-                        padding: '5px 16px',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        fontSize: '16px',
-                        color: '#cf1322',
-                        fontWeight: 600,
-                        height: '40px',
-                    }}
-                >
-                    Час: {formatTime(seconds)}
-                </div>
-            </Row>
-
-            {mockQuestions.map((q, i) => (
-                <Card
-                    key={i}
-                    title={`${i + 1}. ${q.question}`}
-                    style={{
-                        marginBottom: 16,
-                        borderColor:
-                            showCorrect && answers[i] !== null
-                                ? answers[i] === q.correctIndex
-                                    ? 'green'
-                                    : 'red'
-                                : undefined,
-                    }}
-                >
-                    <Radio.Group
-                        onChange={(e) => handleChange(i, e.target.value)}
-                        value={answers[i]}
-                        disabled={submitted}
-                    >
-                        <Space direction="vertical">
-                            {q.options.map((opt, j) => (
-                                <Radio key={j} value={j}>
-                                    {opt}
-                                    {showCorrect && j === q.correctIndex && (
-                                        <Typography.Text type="success" style={{ marginLeft: 8 }}>
-                                            (Правильна)
-                                        </Typography.Text>
-                                    )}
-                                </Radio>
-                            ))}
-                        </Space>
-                    </Radio.Group>
-                </Card>
-            ))}
-
-            {!submitted ? (
-                <Button type="primary" onClick={handleSubmit}>
-                    Завершити тест
-                </Button>
-            ) : (
-                <Space direction="vertical">
-                    <Typography.Text strong>
-                        ✅ Результат: {score} з {mockQuestions.length} (
-                        {resultPercent}%)
-                    </Typography.Text>
-
-                    <Space>
-                        <Button onClick={() => setShowCorrect(true)}>Переглянути правильні відповіді</Button>
-                        <Button color='green' variant="solid" onClick={handleRetry}>
-                            Почати ще раз
-                        </Button>
-                    </Space>
-                </Space>
-            )}
+      <Row justify="space-between" style={{ marginBottom: 16 }}>
+        <Typography.Title level={3}>{test.title}</Typography.Title>
+        <div style={{
+          backgroundColor: '#fff1f0',
+          border: '1px solid #ff4d4f',
+          borderRadius: '12px',
+          padding: '5px 16px',
+          alignItems: 'center',
+          fontSize: '16px',
+          color: '#cf1322',
+          fontWeight: 600,
+          height: '40px',
+        }}>
+          Час: {formatTime(seconds)}
         </div>
-    );
+      </Row>
+
+      {test.testQuestions.map((qItem, i) => {
+        const q = qItem.question;
+        return (
+          <Card
+            key={q.id}
+            title={`${i + 1}. ${q.questionText}`}
+            style={{
+              marginBottom: 16,
+              borderColor: showCorrect
+                ? answers[i] !== null
+                  ? (q.options[answers[i]].isCorrect ? 'green' : 'red') 
+                  : undefined
+                : undefined,
+            }}
+          >
+            <Radio.Group
+              onChange={e => handleChange(i, e.target.value)}
+              value={answers[i]}
+              disabled={submitted}
+            >
+              <Space direction="vertical">
+                {q.options.map((opt, j) => (
+                  <Radio key={opt.id} value={j}>
+                    {opt.optionText}
+                    {showCorrect && opt.isCorrect && (
+                      <Typography.Text type="success" style={{ marginLeft: 8 }}>
+                        (✔)
+                      </Typography.Text>
+                    )}
+                  </Radio>
+                ))}
+              </Space>
+            </Radio.Group>
+          </Card>
+        );
+      })}
+
+      {!submitted ? (
+        <Button type="primary" onClick={handleSubmit}>Завершити тест</Button>
+      ) : (
+        <Space direction="vertical">
+          <Typography.Text strong>
+            ✅ Результат: {localStorage.getItem(`testResult_${id}`)}%
+          </Typography.Text>
+          <Space>
+            <Button onClick={() => setShowCorrect(true)}>Переглянути правильні</Button>
+            <Button type="primary" onClick={handleRetry}>Почати ще раз</Button>
+          </Space>
+        </Space>
+      )}
+    </div>
+  );
 };
 
 export default TestPage;

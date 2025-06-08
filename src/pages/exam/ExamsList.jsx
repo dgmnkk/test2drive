@@ -3,7 +3,7 @@ import { Card, Button, Row, Col, Typography, message, Spin } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { getTests } from '../../api/testsApi';
 
-const TestsList = () => {
+const ExamsList = () => {
   const [tests, setTests] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -12,9 +12,9 @@ const TestsList = () => {
     (async () => {
       try {
         const data = await getTests();
-        setTests(data.filter(test => test.type !== 'exam'));
+        setTests(data.filter(test => test.type == 'exam'));
       } catch (err) {
-        message.error(err.message || 'Не вдалося завантажити тести');
+        message.error(err.message || 'Не вдалося завантажити екзамени');
       } finally {
         setLoading(false);
       }
@@ -26,9 +26,14 @@ const TestsList = () => {
     return result ? Number(result) : null;
   };
 
+  const getTestPassed = (id) => {
+    const result = localStorage.getItem(`testPassed_${id}`);
+    return result ? '✅ Ви склали екзамен' : '❌ Екзамен не складено';
+  };
+
   return (
     <div style={{ padding: 32 }}>
-      <Typography.Title level={2}>📋 Список тестів</Typography.Title>
+      <Typography.Title level={2}>📋 Список екзаменів</Typography.Title>
 
       {loading ? <Spin /> : (
         <Row gutter={[16, 16]}>
@@ -46,16 +51,21 @@ const TestsList = () => {
                   }}
                 >
                   {isCompleted && (
-                    <Typography.Text type="secondary">
-                      ✅ Завершено. Результат: {score}%
-                    </Typography.Text>
+                    <div style={{ marginBottom: 12, display: 'flex', flexDirection: 'column' }}>
+                        <Typography.Text type="secondary">
+                        ✅ Завершено. Результат: {score}%
+                        </Typography.Text>
+                        <Typography.Text type="secondary">
+                            {getTestPassed(test.id)}
+                        </Typography.Text>
+                    </div>
                   )}
                   <div style={{ marginTop: 12 }}>
                     <Button
                       type="primary"
-                      onClick={() => navigate(`/tests/${test.id}`)}
+                      onClick={() => navigate(`/exams/${test.id}`)}
                     >
-                      Почати тестування
+                      Почати екзамен
                     </Button>
                   </div>
                 </Card>
@@ -68,4 +78,4 @@ const TestsList = () => {
   );
 };
 
-export default TestsList;
+export default ExamsList;

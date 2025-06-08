@@ -37,8 +37,11 @@ const LectureDetails = () => {
       <Button onClick={() => navigate("/lectures")}>
         <ArrowLeftOutlined /> Назад
       </Button>
-      <Title>{lecture.title}</Title>
-      <Paragraph>{lecture.content || "Опису немає"}</Paragraph>
+      <Paragraph>
+        {lecture.content
+          ? <span dangerouslySetInnerHTML={{ __html: lecture.content }} />
+          : "Опису немає"}
+      </Paragraph>
     </div>
   );
 };
