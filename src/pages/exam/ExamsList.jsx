@@ -23,13 +23,13 @@ const ExamsList = () => {
   }, []);
 
   const getTestResult = (id) => {
-    const result = localStorage.getItem(`testResult_${id}_${email}`);
+    const result = localStorage.getItem(`examResult_${id}_${email}`);
     return result ? Number(result) : null;
   };
 
   const getTestPassed = (id) => {
-    const result = localStorage.getItem(`testPassed_${id}_${email}`);
-    return result == true ? '✅ Ви склали екзамен' : '❌ Екзамен не складено';
+    const result = localStorage.getItem(`examPassed_${id}_${email}`);
+    return result === 'true' ? '✅ Ви склали екзамен' : '❌ Екзамен не складено';
   };
 
   return (

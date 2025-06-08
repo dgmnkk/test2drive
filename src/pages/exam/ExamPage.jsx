@@ -71,8 +71,8 @@ const ExamPage = () => {
         const score = Math.round((correct / exam.testQuestions.length) * 100);
         const passed = score >= exam.passingScorePercentage;
         
-        localStorage.setItem(`testResult_${exam.id}_${email}`, score.toString());
-        localStorage.setItem(`testPassed_${exam.id}_${email}`, passed.toString());
+        localStorage.setItem(`examResult_${exam.id}_${email}`, score.toString());
+        localStorage.setItem(`examPassed_${exam.id}_${email}`, passed.toString());
 
         Modal.info({
             title: passed ? '✅ Ви склали екзамен' : '❌ Екзамен не складено',
