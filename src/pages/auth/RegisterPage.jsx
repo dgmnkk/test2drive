@@ -21,7 +21,7 @@ const RegisterPage = () => {
       navigate('/lectures');
     } catch (error) {
       console.error(error);
-      message.error(error || 'Помилка реєстрації');
+      message.error(error.message || 'Помилка реєстрації');
     }
   };
 
@@ -60,7 +60,10 @@ const RegisterPage = () => {
           <Form.Item
             label="Пароль"
             name="password"
-            rules={[{ required: true, message: 'Введіть пароль' }]}
+            rules={[
+              { required: true, message: 'Введіть пароль' },
+              { min: 6, message: 'Пароль має бути не менше 6 символів' },
+            ]}
           >
             <Input.Password />
           </Form.Item>
