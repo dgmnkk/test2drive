@@ -99,7 +99,7 @@ const StatisticsPage = () => {
         </Col>
 
         <Col span={24} md={12}>
-          <Card title="🕓 Відкладені лекції">
+          <Card title="🕓 Збережені лекції">
             <Progress
               percent={readLaterLectures.length}
               format={() => `${readLaterLectures.length} лекцій`}
