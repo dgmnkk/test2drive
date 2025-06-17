@@ -53,19 +53,12 @@ const StatisticsPage = () => {
 
       <Row gutter={[24, 24]}>
         <Col span={24} md={12}>
-          <Card title="🧪 Результати тестів">
-            {testData.length === 0 ? (
-              <Typography.Text>Тести ще не проходились</Typography.Text>
-            ) : (
-              <ResponsiveContainer width="100%" height={testData.length * 50}>
-                <BarChart data={testData} layout="vertical">
-                  <XAxis type="number" domain={[0, 100]} />
-                  <YAxis dataKey="name" type="category" width={150} />
-                  <Tooltip />
-                  <Bar dataKey="score" fill="#1890ff" />
-                </BarChart>
-              </ResponsiveContainer>
-            )}
+          <Card title="📚 Переглянуті лекції">
+            <Progress
+              percent={viewedLectures.length}
+              format={() => `${viewedLectures.length} лекцій`}
+              status="active"
+            />
           </Card>
         </Col>
 
@@ -87,14 +80,20 @@ const StatisticsPage = () => {
             )}
           </Card>
         </Col>
-
-        <Col span={24} md={12}>
-          <Card title="📚 Переглянуті лекції">
-            <Progress
-              percent={viewedLectures.length}
-              format={() => `${viewedLectures.length} лекцій`}
-              status="active"
-            />
+         <Col span={24} md={12}>
+          <Card title="🧪 Результати тестів">
+            {testData.length === 0 ? (
+              <Typography.Text>Тести ще не проходились</Typography.Text>
+            ) : (
+              <ResponsiveContainer width="100%" height={testData.length * 50}>
+                <BarChart data={testData} layout="vertical">
+                  <XAxis type="number" domain={[0, 100]} />
+                  <YAxis dataKey="name" type="category" width={150} />
+                  <Tooltip />
+                  <Bar dataKey="score" fill="#1890ff" />
+                </BarChart>
+              </ResponsiveContainer>
+            )}
           </Card>
         </Col>
 
