@@ -57,7 +57,7 @@ const StatisticsPage = () => {
             {testData.length === 0 ? (
               <Typography.Text>Тести ще не проходились</Typography.Text>
             ) : (
-              <ResponsiveContainer width="100%" height={600}>
+              <ResponsiveContainer width="100%" height={testData.length * 50}>
                 <BarChart data={testData} layout="vertical">
                   <XAxis type="number" domain={[0, 100]} />
                   <YAxis dataKey="name" type="category" width={150} />
