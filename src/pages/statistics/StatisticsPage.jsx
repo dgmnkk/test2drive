@@ -61,26 +61,17 @@ const StatisticsPage = () => {
             />
           </Card>
         </Col>
-
         <Col span={24} md={12}>
-          <Card title="📄 Результати екзаменів">
-            {examData.length === 0 ? (
-              <Typography.Text>Екзамени ще не проходились</Typography.Text>
-            ) : (
-              examData.map((exam, index) => (
-                <div key={index} style={{ marginBottom: 16 }}>
-                  <Typography.Text>
-                    {exam.name}: {exam.score !== null ? `${exam.score}% — ` : 'не пройдено '}
-                    {exam.score !== null && (
-                      exam.passed ? '✅ Складено' : '❌ Не складено'
-                    )}
-                  </Typography.Text>
-                </div>
-              ))
-            )}
+          <Card title="🕓 Збережені лекції">
+            <Progress
+              percent={readLaterLectures.length}
+              format={() => `${readLaterLectures.length} лекцій`}
+              status="exception"
+            />
           </Card>
         </Col>
-         <Col span={24} md={12}>
+
+        <Col span={24} md={12}>
           <Card title="🧪 Результати тестів">
             {testData.length === 0 ? (
               <Typography.Text>Тести ще не проходились</Typography.Text>
@@ -98,12 +89,21 @@ const StatisticsPage = () => {
         </Col>
 
         <Col span={24} md={12}>
-          <Card title="🕓 Збережені лекції">
-            <Progress
-              percent={readLaterLectures.length}
-              format={() => `${readLaterLectures.length} лекцій`}
-              status="exception"
-            />
+          <Card title="📄 Результати екзаменів">
+            {examData.length === 0 ? (
+              <Typography.Text>Екзамени ще не проходились</Typography.Text>
+            ) : (
+              examData.map((exam, index) => (
+                <div key={index} style={{ marginBottom: 16 }}>
+                  <Typography.Text>
+                    {exam.name}: {exam.score !== null ? `${exam.score}% — ` : 'не пройдено '}
+                    {exam.score !== null && (
+                      exam.passed ? '✅ Складено' : '❌ Не складено'
+                    )}
+                  </Typography.Text>
+                </div>
+              ))
+            )}
           </Card>
         </Col>
       </Row>
